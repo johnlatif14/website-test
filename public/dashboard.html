@@ -1,8 +1,8 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>لوحة التحكم</title>
   <style>
     body {
@@ -10,110 +10,255 @@
       background: #0f1724;
       color: #e6eef8;
       margin: 0;
+      padding: 20px;
     }
     .container {
-      display: grid;
-      grid-template-columns: 250px 1fr;
-      min-height: 100vh;
+      max-width: 1200px;
+      margin: 0 auto;
     }
-    .sidebar {
-      background: #0b1220;
-      padding: 20px;
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 0;
+      border-bottom: 1px solid #2e3a4e;
+      margin-bottom: 30px;
     }
-    .main {
-      padding: 20px;
-    }
-    .section {
-      background: #0b1220;
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 20px;
-    }
-    h1, h2 {
+    h1 {
       color: #7c3aed;
+      margin: 0;
     }
-    table {
-      width: 100%;
-      border-collapse: collapse;
+    .logout-btn {
+      background: #ff4757;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
     }
-    th, td {
-      padding: 12px;
-      text-align: right;
+    .tabs {
+      display: flex;
+      margin-bottom: 20px;
       border-bottom: 1px solid #2e3a4e;
     }
-    .smtp-form input {
+    .tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+    }
+    .tab.active {
+      border-bottom: 2px solid #7c3aed;
+      color: #7c3aed;
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    input, textarea {
       width: 100%;
       padding: 10px;
-      margin: 8px 0;
-      border-radius: 8px;
+      border-radius: 5px;
       border: 1px solid #2e3a4e;
-      background: #0f1724;
+      background: #0b1220;
       color: #e6eef8;
+    }
+    textarea {
+      min-height: 150px;
     }
     button {
       background: linear-gradient(90deg, #7c3aed, #06b6d4);
       color: white;
       border: none;
       padding: 10px 20px;
-      border-radius: 8px;
+      border-radius: 5px;
       cursor: pointer;
       font-weight: bold;
-      margin-top: 10px;
+    }
+    .message-item {
+      background: #0b1220;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 15px;
+    }
+    .message-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      color: #7c3aed;
+    }
+    .success {
+      color: #2ecc71;
+      padding: 10px;
+      background: rgba(46, 204, 113, 0.1);
+      border-radius: 5px;
+      margin-bottom: 15px;
+    }
+    .error {
+      color: #ff6b6b;
+      padding: 10px;
+      background: rgba(255, 107, 107, 0.1);
+      border-radius: 5px;
+      margin-bottom: 15px;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="sidebar">
-      <h2>القائمة</h2>
-      <ul>
-        <li><a href="#smtp">إعدادات SMTP</a></li>
-        <li><a href="#messages">الرسائل</a></li>
-      </ul>
-    </div>
-    <div class="main">
+    <header>
       <h1>لوحة التحكم</h1>
-      
-      <div id="smtp" class="section">
-        <h2>إعدادات SMTP</h2>
-        <form class="smtp-form">
-          <input type="text" placeholder="SMTP Host" required>
-          <input type="number" placeholder="Port" required>
-          <input type="text" placeholder="Username" required>
-          <input type="password" placeholder="Password" required>
-          <input type="text" placeholder="From Email" required>
-          <button type="submit">حفظ الإعدادات</button>
-        </form>
-      </div>
-      
-      <div id="messages" class="section">
-        <h2>الرسائل الواردة</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>الاسم</th>
-              <th>طريقة الاتصال</th>
-              <th>التفاصيل</th>
-              <th>التاريخ</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>محمد أحمد</td>
-              <td>example@email.com</td>
-              <td>أريد استفسار عن الخدمات</td>
-              <td>2023-05-15</td>
-            </tr>
-            <tr>
-              <td>علي محمود</td>
-              <td>+20123456789</td>
-              <td>استفسار عن الأسعار</td>
-              <td>2023-05-14</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <button class="logout-btn" onclick="logout()">تسجيل الخروج</button>
+    </header>
+
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('smtp')">إعدادات SMTP</div>
+      <div class="tab" onclick="switchTab('messages')">الرسائل</div>
+    </div>
+
+    <div id="smtp" class="tab-content active">
+      <h2>إعدادات SMTP</h2>
+      <form id="smtp-form">
+        <div class="form-group">
+          <label for="smtp-host">SMTP Host</label>
+          <input type="text" id="smtp-host" value="<%= process.env.SMTP_HOST %>" readonly>
+        </div>
+        <div class="form-group">
+          <label for="smtp-port">SMTP Port</label>
+          <input type="text" id="smtp-port" value="<%= process.env.SMTP_PORT %>" readonly>
+        </div>
+        <div class="form-group">
+          <label for="smtp-user">SMTP Username</label>
+          <input type="text" id="smtp-user" value="<%= process.env.SMTP_USER %>" readonly>
+        </div>
+      </form>
+
+      <h2 style="margin-top: 30px;">إرسال رسالة</h2>
+      <form id="send-email-form">
+        <div class="form-group">
+          <label for="email-to">إلى</label>
+          <input type="email" id="email-to" required>
+        </div>
+        <div class="form-group">
+          <label for="email-subject">الموضوع</label>
+          <input type="text" id="email-subject" required>
+        </div>
+        <div class="form-group">
+          <label for="email-text">الرسالة</label>
+          <textarea id="email-text" required></textarea>
+        </div>
+        <button type="submit">إرسال</button>
+      </form>
+      <div id="email-result"></div>
+    </div>
+
+    <div id="messages" class="tab-content">
+      <h2>الرسائل الواردة</h2>
+      <div id="messages-list"></div>
     </div>
   </div>
+
+  <script>
+    function switchTab(tabId) {
+      // Hide all tab contents
+      document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+      });
+      
+      // Deactivate all tabs
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      
+      // Activate selected tab
+      document.getElementById(tabId).classList.add('active');
+      document.querySelector(`.tab[onclick="switchTab('${tabId}')"]`).classList.add('active');
+    }
+
+    function logout() {
+      fetch('/logout', { method: 'GET' })
+        .then(() => window.location.href = '/login.html');
+    }
+
+    function loadMessages() {
+      fetch('/api/messages')
+        .then(response => response.json())
+        .then(messages => {
+          const messagesList = document.getElementById('messages-list');
+          messagesList.innerHTML = '';
+          
+          if (messages.length === 0) {
+            messagesList.innerHTML = '<p>لا توجد رسائل</p>';
+            return;
+          }
+          
+          messages.forEach(message => {
+            const messageItem = document.createElement('div');
+            messageItem.className = 'message-item';
+            
+            const date = new Date(message.date).toLocaleString('ar-EG');
+            
+            messageItem.innerHTML = `
+              <div class="message-header">
+                <strong>${message.name}</strong>
+                <span>${date}</span>
+              </div>
+              <div><strong>الاتصال:</strong> ${message.contact}</div>
+              <div><strong>الرسالة:</strong> ${message.details}</div>
+            `;
+            
+            messagesList.appendChild(messageItem);
+          });
+        });
+    }
+
+    // Handle email form submission
+    document.getElementById('send-email-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const to = document.getElementById('email-to').value;
+      const subject = document.getElementById('email-subject').value;
+      const text = document.getElementById('email-text').value;
+      
+      fetch('/api/send-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ to, subject, text })
+      })
+      .then(response => response.json())
+      .then(data => {
+        const resultDiv = document.getElementById('email-result');
+        if (data.success) {
+          resultDiv.innerHTML = '<div class="success">تم إرسال الرسالة بنجاح</div>';
+          document.getElementById('send-email-form').reset();
+        } else {
+          resultDiv.innerHTML = `<div class="error">خطأ في الإرسال: ${data.error}</div>`;
+        }
+      })
+      .catch(error => {
+        document.getElementById('email-result').innerHTML = `<div class="error">خطأ في الإرسال: ${error.message}</div>`;
+      });
+    });
+
+    // Load messages when messages tab is shown
+    document.querySelector('.tab[onclick="switchTab(\'messages\')"]').addEventListener('click', loadMessages);
+
+    // Check if we have a success parameter in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('success') === '1') {
+      const resultDiv = document.getElementById('email-result');
+      resultDiv.innerHTML = '<div class="success">تم إرسال الرسالة بنجاح</div>';
+    }
+  </script>
 </body>
 </html>

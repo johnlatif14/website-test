@@ -1,119 +1,125 @@
 require('dotenv').config();
 const express = require('express');
-const bodyParser = require('body-parser');
 const path = require('path');
-const nodemailer = require('nodemailer');
 const session = require('express-session');
+const bodyParser = require('body-parser');
+const nodemailer = require('nodemailer');
+const fs = require('fs');
 
 const app = express();
 
-// Middlewares
+// Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
-
-// إعداد الجلسة
 app.use(session({
-  secret: process.env.SESSION_SECRET,
+  secret: process.env.SESSION_SECRET || 'your-secret-key',
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: false } // في الإنتاج يجب أن يكون true مع HTTPS
+  cookie: { secure: false } // set to true if using HTTPS
 }));
 
-// إعداد SMTP من ملف .env
-const smtpConfig = {
-  host: process.env.SMTP_HOST,
-  port: parseInt(process.env.SMTP_PORT),
-  secure: false, // true لـ 465، false لـ 587
-  auth: {
-    user: process.env.SMTP_USERNAME,
-    pass: process.env.SMTP_PASSWORD
-  }
-};
-
-// تخزين الرسائل (في تطبيق حقيقي يستخدم قاعدة بيانات)
-let messages = [];
-
-// Middleware للتحقق من المصادقة
+// Authentication middleware
 const requireAuth = (req, res, next) => {
-  if (req.session.isAuthenticated) {
+  if (req.session.authenticated) {
     return next();
   }
-  res.redirect('/login');
+  res.redirect('/login.html');
 };
 
-// الصفحات الرئيسية
-app.get('/public/contact.html', (req, res) => {
+// Routes
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+app.get('/contact.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'contact.html'));
 });
 
-app.get('/login', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'login.html'));
-});
-
-app.get('/dashboard', requireAuth, (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'dashboard.html'));
-});
-
-// معالجة تسجيل الدخول
+// Login route
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
   
   if (username === process.env.ADMIN_USERNAME && password === process.env.ADMIN_PASSWORD) {
-    req.session.isAuthenticated = true;
+    req.session.authenticated = true;
     res.redirect('/dashboard.html');
   } else {
-    res.redirect('/login?error=invalid_credentials');
+    res.redirect('/login.html?error=1');
   }
 });
 
-// تسجيل الخروج
+// Logout route
 app.get('/logout', (req, res) => {
   req.session.destroy();
-  res.redirect('/login');
+  res.redirect('/login.html');
 });
 
-// معالجة إرسال نموذج الاتصال
+// Contact form submission
 app.post('/submit-contact', (req, res) => {
   const { name, contact, details } = req.body;
-  const newMessage = {
+  
+  // Save to messages.json
+  const message = {
     name,
     contact,
     details,
     date: new Date().toISOString()
   };
-  messages.push(newMessage);
   
-  // إرسال البريد الإلكتروني
-  const transporter = nodemailer.createTransport(smtpConfig);
+  let messages = [];
+  try {
+    messages = JSON.parse(fs.readFileSync('messages.json'));
+  } catch (err) {
+    // File doesn't exist or is empty
+  }
   
-  const mailOptions = {
-    from: process.env.SMTP_FROM,
-    to: process.env.SMTP_USERNAME,
-    subject: `رسالة جديدة من ${name}`,
-    text: `الاسم: ${name}\nطريقة الاتصال: ${contact}\nالتفاصيل: ${details}`
-  };
+  messages.push(message);
+  fs.writeFileSync('messages.json', JSON.stringify(messages, null, 2));
   
-  transporter.sendMail(mailOptions, (error) => {
-    if (error) {
-      console.error('فشل إرسال البريد:', error);
+  res.redirect('/contact.html?success=1');
+});
+
+// Get messages (for dashboard)
+app.get('/api/messages', requireAuth, (req, res) => {
+  try {
+    const messages = JSON.parse(fs.readFileSync('messages.json'));
+    res.json(messages);
+  } catch (err) {
+    res.json([]);
+  }
+});
+
+// Send email route
+app.post('/api/send-email', requireAuth, (req, res) => {
+  const { to, subject, text } = req.body;
+  
+  const transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: process.env.SMTP_PORT,
+    secure: process.env.SMTP_SECURE === 'true',
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS
     }
   });
   
-  res.redirect('/public/contact.html?success=true');
+  const mailOptions = {
+    from: process.env.SMTP_FROM || process.env.SMTP_USER,
+    to,
+    subject,
+    text
+  };
+  
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      return res.status(500).json({ success: false, error: error.message });
+    }
+    res.json({ success: true, info });
+  });
 });
 
-// API للحصول على الرسائل (محمية بالمصادقة)
-app.get('/api/messages', requireAuth, (req, res) => {
-  res.json(messages);
-});
-
-// معالجة حفظ إعدادات SMTP
-app.post('/save-smtp', requireAuth, (req, res) => {
-  // في تطبيق حقيقي، يجب حفظ هذه الإعدادات في قاعدة بيانات
-  res.redirect('/dashboard?smtp_saved=true');
-});
-
+// Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`الخادم يعمل على المنفذ ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
