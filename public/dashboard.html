@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>لوحة التحكم</title>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0f1724;
+      color: #e6eef8;
+      margin: 0;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      min-height: 100vh;
+    }
+    .sidebar {
+      background: #0b1220;
+      padding: 20px;
+    }
+    .main {
+      padding: 20px;
+    }
+    .section {
+      background: #0b1220;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    h1, h2 {
+      color: #7c3aed;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 12px;
+      text-align: right;
+      border-bottom: 1px solid #2e3a4e;
+    }
+    .smtp-form input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 8px;
+      border: 1px solid #2e3a4e;
+      background: #0f1724;
+      color: #e6eef8;
+    }
+    button {
+      background: linear-gradient(90deg, #7c3aed, #06b6d4);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="sidebar">
+      <h2>القائمة</h2>
+      <ul>
+        <li><a href="#smtp">إعدادات SMTP</a></li>
+        <li><a href="#messages">الرسائل</a></li>
+      </ul>
+    </div>
+    <div class="main">
+      <h1>لوحة التحكم</h1>
+      
+      <div id="smtp" class="section">
+        <h2>إعدادات SMTP</h2>
+        <form class="smtp-form">
+          <input type="text" placeholder="SMTP Host" required>
+          <input type="number" placeholder="Port" required>
+          <input type="text" placeholder="Username" required>
+          <input type="password" placeholder="Password" required>
+          <input type="text" placeholder="From Email" required>
+          <button type="submit">حفظ الإعدادات</button>
+        </form>
+      </div>
+      
+      <div id="messages" class="section">
+        <h2>الرسائل الواردة</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>الاسم</th>
+              <th>طريقة الاتصال</th>
+              <th>التفاصيل</th>
+              <th>التاريخ</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>محمد أحمد</td>
+              <td>example@email.com</td>
+              <td>أريد استفسار عن الخدمات</td>
+              <td>2023-05-15</td>
+            </tr>
+            <tr>
+              <td>علي محمود</td>
+              <td>+20123456789</td>
+              <td>استفسار عن الأسعار</td>
+              <td>2023-05-14</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

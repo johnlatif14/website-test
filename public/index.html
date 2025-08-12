@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>موقعي الشخصي</title>
+  <meta name="description" content="موقع شخصي بسيط مع تأثيرات 3D وحركات لعرض المشاريع والسيرة" />
+
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#0f1724; --card:#0b1220; --muted:#9aa4b2; --accent:#7c3aed;
+      --glass: rgba(255,255,255,0.04);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;}
+    body{
+      margin:0; font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      background: radial-gradient(1000px 400px at 10% 20%, rgba(124,58,237,0.12), transparent), var(--bg);
+      color:#e6eef8; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+      line-height:1.5; padding:24px;
+    }
+
+    .container{max-width:1100px; margin:0 auto;}
+
+    header{display:flex;gap:16px;align-items:center;justify-content:space-between;margin-bottom:28px}
+    .brand{display:flex;gap:12px;align-items:center}
+    .logo{width:100px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#06b6d4);display:grid;place-items:center;font-weight:800}
+    nav a{color:var(--muted);text-decoration:none;margin-left:14px}
+
+    .hero{display:grid;grid-template-columns:1fr 420px;gap:28px;align-items:center;margin-bottom:36px}
+    .hero .intro h1{font-size:32px;margin:0 0 8px}
+    .hero .intro p{color:var(--muted);margin:0 0 14px}
+    .btn{display:inline-block;padding:10px 14px;border-radius:10px;background:linear-gradient(90deg,var(--accent),#06b6d4);color:white;text-decoration:none;font-weight:600}
+
+    /* 3D canvas box */
+    .card-3d{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:14px;border-radius:16px;box-shadow:0 6px 30px rgba(2,6,23,0.6);backdrop-filter: blur(6px);}
+    canvas{display:block;border-radius:12px;width:100%;height:320px}
+
+    /* Projects grid */
+    .projects{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin-bottom:36px}
+    .proj{background:var(--card);border-radius:14px;padding:18px;transform-style:preserve-3d;perspective:1000px;transition:transform .25s ease, box-shadow .25s ease;cursor:pointer}
+    .proj:hover{transform:translateY(-8px) rotateX(6deg);box-shadow:0 18px 40px rgba(2,6,23,0.6)}
+    .proj .thumb{height:140px;border-radius:10px;margin-bottom:12px;overflow:hidden;display:grid;place-items:center;background:linear-gradient(135deg, rgba(124,58,237,0.14), rgba(6,182,212,0.06))}
+    .proj h3{margin:0 0 6px}
+    .proj p{color:var(--muted);margin:0;font-size:14px}
+
+    /* About */
+    .about{background:var(--glass);padding:18px;border-radius:12px;color:#dbe7f7}
+
+    footer{color:var(--muted);text-align:center;padding-top:18px;border-top:1px solid rgba(255,255,255,0.03)}
+
+    /* Responsive */
+    @media (max-width:880px){
+      .hero{grid-template-columns:1fr}
+      canvas{height:240px}
+    }
+.proj {
+  color: white; /* يخلي النص أبيض */
+  text-decoration: none; /* يشيل الخط تحت النص */
+  display: block; /* يخلي العنصر يتصرف زي <article> */
+}
+.proj:hover {
+  color: white; /* يثبت اللون عند التمرير */
+}
+.image-3d {
+  display: block;
+  width: 100%;
+  height: 320px;
+  object-fit: cover; /* يخلي الصورة تملى المساحة وتقص الزيادة */
+  border-radius: 12px;
+}
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo">Devolper</div>
+        <div>
+          <div style="font-weight:700">جون</div>
+          <div style="font-size:13px;color:var(--muted)">مطور ويب — مصمم واجهات</div>
+        </div>
+      </div>
+      <nav>
+        <a href="#projects">المشاريع</a>
+        <a href="#about">عني</a>
+        <a href="#contact">تواصل</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <div class="intro" data-aos="fade-right">
+        <h1>أهلاً — أنا جون مطور ويب ومصمم واجهات</h1>
+        <p>موقع شخصي لعرض مشاريعي بطريقة أنيقة — فيه 3D بسيط وأنيميشن.</p>
+        <a class="btn" href="#projects">شاهد مشاريعي</a>
+      </div>
+
+<div class="card-3d" data-aos="fade-left">
+  <img src="https://i.postimg.cc/cLYMQzmj/Facebook.jpg" alt="صورة عرض" class="image-3d">
+</div>
+
+
+    </section>
+
+<section id="projects">
+  <h2 style="margin:0 0 12px">المشاريع</h2>
+  <div class="projects">
+    
+    <!-- المشروع الأول -->
+    <a href="https://clan-king-esport-production.up.railway.app" target="_blank" class="proj" data-aos="zoom-in">
+      <div class="thumb" aria-hidden>
+        <img src="https://i.postimg.cc/xCW1y6gx/clan.jpg" 
+             alt="المشروع الأول" 
+             style="width:100%;height:100%;object-fit:cover;border-radius:10px;">
+      </div>
+      <h3>المشروع الأول</h3>
+      <p>عشيرة للعبة ببجي</p>
+    </a>
+
+    <!-- المشروع الثاني -->
+    <a href="https://king-store-esport-production.up.railway.app" target="_blank" class="proj" data-aos="zoom-in" data-aos-delay="80">
+      <div class="thumb">
+        <img src="https://i.postimg.cc/9M4f76Pw/store.jpg" 
+             alt="المشروع الثاني" 
+             style="width:100%;height:100%;object-fit:cover;border-radius:10px;">
+      </div>
+      <h3>المشروع الثاني</h3>
+      <p>متجر شحن شدات ببجي</p>
+    </a>
+
+    <!-- المشروع الثالث -->
+    <a href="https://apkpure.com/king-store%E4%B8%AAesports%E3%83%84/com.example.kingstore_fixed" target="_blank" class="proj" data-aos="zoom-in" data-aos-delay="160">
+      <div class="thumb">
+        <img src="https://i.postimg.cc/vHwm4S4D/App.jpg" 
+             alt="المشروع الثالث" 
+             style="width:100%;height:100%;object-fit:cover;border-radius:10px;">
+      </div>
+      <h3>المشروع الثالث</h3>
+      <p>ابلكيشن بسيط(apkpure)</p>
+    </a>
+
+  </div>
+</section>
+
+
+<section id="about" class="about" data-aos="fade-up">
+  <h3>عنّي</h3>
+  <p>
+    أنا مطوّر ويب شغوف بتصميم وتطوير مواقع أنيقة وسهلة الاستخدام، أجمع بين الجماليات والتجربة السلسة للمستخدم.  
+    أمتلك خبرة في إنشاء واجهات أمامية جذابة وحديثة، بالإضافة إلى تنفيذ وظائف خلفية خفيفة باستخدام Node.js وPHP وPython.  
+    أعمل بأسلوب مرن يركز على فهم احتياجات العميل، وضع خطة واضحة، ثم التنفيذ بدقة واختبار الجودة قبل الإطلاق.
+  </p>
+</section>
+
+
+<section id="contact" style="margin-top:18px" data-aos="fade-up">
+  <h3>تواصل</h3>
+  <p style="color:var(--muted); margin-bottom:10px">
+    تواصل معي عبر أي منصة مفضلة — اختار الزر المناسب.
+  </p>
+
+  <div class="contact-links" style="display:flex;gap:12px;align-items:center">
+<!-- WhatsApp -->
+<a href="https://wa.me/201274445091" target="_blank" aria-label="واتساب" style="display:inline-flex; align-items:center; justify-content:center; width:50px; height:50px; border-radius:50%; background-color:#25D366;">
+  <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 32 32" fill="white">
+    <path d="M16 .5C7.44.5.5 7.44.5 16c0 2.8.73 5.53 2.1 7.94L0 32l8.28-2.6A15.4 15.4 0 0 0 16 31.5c8.56 0 15.5-6.94 15.5-15.5S24.56.5 16 .5zm0 28.12c-2.64 0-5.21-.7-7.45-2.03l-.54-.32-4.91 1.54 1.6-4.78-.35-.56a12.47 12.47 0 0 1-1.9-6.5C2.45 9.11 8.59 3 16 3c3.33 0 6.46 1.3 8.82 3.67A12.44 12.44 0 0 1 28 15.5c0 6.87-5.59 12.46-12.5 12.46zm6.88-9.36c-.38-.19-2.24-1.1-2.59-1.23-.35-.13-.61-.19-.87.19s-1 1.23-1.23 1.49c-.23.26-.45.29-.83.1-.38-.19-1.6-.59-3.04-1.88-1.12-1-1.88-2.23-2.1-2.61-.22-.38-.02-.58.17-.77.17-.17.38-.45.57-.67.19-.22.25-.38.38-.64.13-.26.06-.48-.03-.67-.1-.19-.87-2.1-1.2-2.87-.32-.77-.65-.67-.87-.68-.22 0-.48-.01-.74-.01s-.67.1-1.02.48c-.35.38-1.34 1.31-1.34 3.19s1.37 3.7 1.56 3.95c.19.26 2.69 4.11 6.53 5.76.91.39 1.62.62 2.17.8.91.29 1.74.25 2.39.15.73-.11 2.24-.91 2.56-1.8.32-.89.32-1.66.23-1.8-.09-.14-.35-.23-.73-.42z"/>
+  </svg>
+</a>
+
+    <!-- Telegram -->
+    <a class="social-link telegram" href="https://t.me/201208260628" target="_blank" aria-label="تيليجرام">
+      <svg width="28" height="28" viewBox="0 0 240 240">
+        <circle cx="120" cy="120" r="120" fill="#0088cc"/>
+        <path fill="#fff" d="M179.3 69.6l-23.9 113.2c-1.8 8.1-6.6 10.1-13.4 6.3l-37-27.4-17.8 17.2c-2 2-3.7 3.7-7.4 3.7l2.6-37.1 68-61.5c3-2.6-.7-4.1-4.1-1.5l-84 52.9-36.2-11.6c-7.9-2.5-8-8 1.6-11.8l139.3-53.2c6.4-2.3 12.1 1.5 10 11z"/>
+      </svg>
+    </a>
+
+<!-- بدلاً من "يتم انشاء صفحة للتحدث خلال الموقع" -->
+<a href="public/contact.html" class="btn" style="margin-right: 12px;">للتواصل في الصفحة اضغط هنا</a>
+  <style>
+    .contact-links .social-link {
+      display:inline-flex;
+      width:50px;height:50px;
+      border-radius:12px;
+      align-items:center;justify-content:center;
+      color: #fff; text-decoration:none;
+      transition:transform .16s ease, box-shadow .16s ease;
+    }
+    .social-link.whatsapp { background-color: #25D366; }
+    .social-link.telegram { background-color: #0088cc; }
+    .social-link.gmail { background-color: transparent; } /* الجيميل شفاف لأن اللوجو فيه الألوان */
+    .contact-links .social-link:hover{
+      transform:translateY(-6px) scale(1.05);
+      box-shadow:0 10px 20px rgba(0,0,0,0.3);
+    }
+  </style>
+</section>
+
+
+    <footer>
+      تم بناء هذا الموقع مع تأثيرات CSS وThree.js 
+    </footer>
+
+  </div>
+
+  <!-- Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r152/three.min.js"></script>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+  <script>
+    /* AOS init */
+    AOS.init({once:true, duration:800});
+
+    /* Simple Three.js rotating logo inside the canvas */
+    (function(){
+      const canvas = document.getElementById('threeCanvas');
+      const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(35, canvas.clientWidth / canvas.clientHeight, 0.1, 100);
+      camera.position.set(0,0,6);
+
+      const light = new THREE.DirectionalLight(0xffffff, 1);
+      light.position.set(5,5,5);
+      scene.add(light);
+      scene.add(new THREE.AmbientLight(0xffffff,0.3));
+
+      // create a compound geometry (pseudo logo)
+      const group = new THREE.Group();
+      const geom1 = new THREE.BoxGeometry(1.6,1,0.4);
+      const geom2 = new THREE.TorusGeometry(0.6,0.18,16,60);
+      const mat = new THREE.MeshStandardMaterial({color:0x7c3aed, metalness:0.25, roughness:0.4, emissive:0x061033, emissiveIntensity:0.05});
+      const box = new THREE.Mesh(geom1, mat);
+      const tor = new THREE.Mesh(geom2, mat);
+      tor.rotation.x = Math.PI/2; tor.position.set(0,0,0.6);
+      group.add(box, tor);
+      scene.add(group);
+
+      function resizeRenderer() {
+        const width = canvas.clientWidth;
+        const height = canvas.clientHeight;
+        if (canvas.width !== width || canvas.height !== height) {
+          renderer.setSize(width, height, false);
+          camera.aspect = width/height;
+          camera.updateProjectionMatrix();
+        }
+      }
+
+      // subtle mouse parallax
+      let mx=0,my=0,tx=0,ty=0;
+      window.addEventListener('mousemove', (e)=>{
+        const r = canvas.getBoundingClientRect();
+        const x = (e.clientX - r.left)/r.width - 0.5;
+        const y = (e.clientY - r.top)/r.height - 0.5;
+        mx = x*0.8; my = -y*0.6;
+      });
+
+      function animate(){
+        resizeRenderer();
+        tx += (mx - tx)*0.06; ty += (my-ty)*0.06;
+        group.rotation.y += 0.01;
+        group.rotation.x = ty*0.6;
+        group.rotation.z = tx*0.3;
+        renderer.render(scene, camera);
+        requestAnimationFrame(animate);
+      }
+      animate();
+
+      // make sure canvas scales on resize
+      window.addEventListener('resize', ()=>{resizeRenderer();});
+
+    })();
+
+    /* Small helper: make project cards clickable for demo */
+    document.querySelectorAll('.proj').forEach((p,i)=>{
+      p.addEventListener('click', ()=>{alert('افتح صفحة المشروع أو أضف رابط هنا (Project '+(i+1)+')')});
+    });
+  </script>
+</body>
+</html>

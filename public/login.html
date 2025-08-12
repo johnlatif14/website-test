@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>تسجيل الدخول</title>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0f1724;
+      color: #e6eef8;
+      display: grid;
+      place-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .login-box {
+      background: #0b1220;
+      padding: 32px;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 6px 30px rgba(2,6,23,0.6);
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 8px;
+      border: 1px solid #2e3a4e;
+      background: #0f1724;
+      color: #e6eef8;
+    }
+    button {
+      background: linear-gradient(90deg, #7c3aed, #06b6d4);
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      width: 100%;
+      margin-top: 16px;
+    }
+    h1 {
+      color: #7c3aed;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-box">
+    <h1>تسجيل الدخول</h1>
+    <form action="/login" method="POST">
+      <input type="text" placeholder="اسم المستخدم" required>
+      <input type="password" placeholder="كلمة المرور" required>
+      <button type="submit">دخول</button>
+    </form>
+  </div>
+</body>
+</html>
