@@ -42,7 +42,7 @@ const requireAuth = (req, res, next) => {
 };
 
 // الصفحات الرئيسية
-app.get('/contact.html', (req, res) => {
+app.get('/public/contact.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'contact.html'));
 });
 
@@ -60,7 +60,7 @@ app.post('/login', (req, res) => {
   
   if (username === process.env.ADMIN_USERNAME && password === process.env.ADMIN_PASSWORD) {
     req.session.isAuthenticated = true;
-    res.redirect('/dashboard.html');
+    res.redirect('/dashboard');
   } else {
     res.redirect('/login?error=invalid_credentials');
   }
