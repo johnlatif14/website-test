@@ -60,7 +60,7 @@ app.post('/login', (req, res) => {
   
   if (username === process.env.ADMIN_USERNAME && password === process.env.ADMIN_PASSWORD) {
     req.session.isAuthenticated = true;
-    res.redirect('/dashboard');
+    res.redirect('/dashboard.html');
   } else {
     res.redirect('/login?error=invalid_credentials');
   }
