@@ -120,28 +120,12 @@
     </header>
 
     <div class="tabs">
-      <div class="tab active" onclick="switchTab('smtp')">إعدادات SMTP</div>
-      <div class="tab" onclick="switchTab('messages')">الرسائل</div>
+      <div class="tab active" onclick="switchTab('send-email')">إرسال رسائل</div>
+      <div class="tab" onclick="switchTab('messages')">الرسائل الواردة</div>
     </div>
 
-    <div id="smtp" class="tab-content active">
-      <h2>إعدادات SMTP</h2>
-      <form id="smtp-form">
-        <div class="form-group">
-          <label for="smtp-host">SMTP Host</label>
-          <input type="text" id="smtp-host" value="<%= process.env.SMTP_HOST %>" readonly>
-        </div>
-        <div class="form-group">
-          <label for="smtp-port">SMTP Port</label>
-          <input type="text" id="smtp-port" value="<%= process.env.SMTP_PORT %>" readonly>
-        </div>
-        <div class="form-group">
-          <label for="smtp-user">SMTP Username</label>
-          <input type="text" id="smtp-user" value="<%= process.env.SMTP_USER %>" readonly>
-        </div>
-      </form>
-
-      <h2 style="margin-top: 30px;">إرسال رسالة</h2>
+    <div id="send-email" class="tab-content active">
+      <h2>إرسال رسالة</h2>
       <form id="send-email-form">
         <div class="form-group">
           <label for="email-to">إلى</label>
@@ -168,17 +152,14 @@
 
   <script>
     function switchTab(tabId) {
-      // Hide all tab contents
       document.querySelectorAll('.tab-content').forEach(content => {
         content.classList.remove('active');
       });
       
-      // Deactivate all tabs
       document.querySelectorAll('.tab').forEach(tab => {
         tab.classList.remove('active');
       });
       
-      // Activate selected tab
       document.getElementById(tabId).classList.add('active');
       document.querySelector(`.tab[onclick="switchTab('${tabId}')"]`).classList.add('active');
     }
@@ -220,7 +201,6 @@
         });
     }
 
-    // Handle email form submission
     document.getElementById('send-email-form').addEventListener('submit', function(e) {
       e.preventDefault();
       
@@ -250,10 +230,8 @@
       });
     });
 
-    // Load messages when messages tab is shown
     document.querySelector('.tab[onclick="switchTab(\'messages\')"]').addEventListener('click', loadMessages);
 
-    // Check if we have a success parameter in URL
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('success') === '1') {
       const resultDiv = document.getElementById('email-result');
