@@ -33,15 +33,73 @@
       border-radius: 8px;
       text-decoration: none;
     }
+    #dynamic-content div {
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    #dynamic-content h2 {
+      color: #7c3aed;
+    }
+    #dynamic-content img {
+      max-width: 100%;
+      border-radius: 8px;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
   <h1>عن الموقع</h1>
   <div class="content">
-    <p>مرحبًا بك في صفحة "عن الموقع". هذه الصفحة تحتوي على معلومات إضافية حول الموقع وصاحبه.</p>
-    <p>يمكنك إضافة أي محتوى تريده هنا مثل السيرة الذاتية، معلومات الاتصال، أو أي تفاصيل أخرى تريد مشاركتها مع الزوار.</p>
-    <p>هذه الصفحة تظهر بعد النقر 5 مرات متتالية في أي مكان في الصفحة الرئيسية.</p>
+    <div id="dynamic-content">
+      <!-- سيتم عرض المحتوى المضاف هنا تلقائيا -->
+    </div>
     <a href="index.html" class="back-btn">العودة للصفحة الرئيسية</a>
   </div>
+
+  <script>
+    fetch('/api/content')
+      .then(response => response.json())
+      .then(content => {
+        const container = document.getElementById('dynamic-content');
+        
+        if (content.length === 0) {
+          container.innerHTML = `
+            <div>
+              <h2>مرحبًا بكم في الموفع 💀</h2>
+              <p>هذه الصفحة تحتوي على معلومات عني وعن مشاريعي. يمكنك إضافة محتوى لهذه الصفحة من لوحة التحكم.</p>
+            </div>
+          `;
+          return;
+        }
+        
+        content.forEach(item => {
+          const element = document.createElement('div');
+          
+          if (item.type === 'text') {
+            element.innerHTML = `
+              <h2>${item.title}</h2>
+              <p>${item.content.replace(/\n/g, '<br>')}</p>
+            `;
+          } else {
+            element.innerHTML = `
+              <h2>${item.title}</h2>
+              <p>${item.description.replace(/\n/g, '<br>')}</p>
+              <img src="${item.url}" alt="${item.title}">
+            `;
+          }
+          
+          container.appendChild(element);
+        });
+      })
+      .catch(error => {
+        document.getElementById('dynamic-content').innerHTML = `
+          <div>
+            <h2>مرحبًا بكم في الموقع 💀</h2>
+            <p>هذه الصفحة تحتوي على معلومات عني وعن مشاريعي. يمكنك إضافة محتوى لهذه الصفحة من لوحة التحكم.</p>
+          </div>
+        `;
+      });
+  </script>
 </body>
 </html>

@@ -110,6 +110,61 @@
       border-radius: 5px;
       margin-bottom: 15px;
     }
+    .content-type-selector {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .content-type-selector button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 5px;
+      background: #2e3a4e;
+      color: #e6eef8;
+      cursor: pointer;
+    }
+    .content-type-selector button.active-type {
+      background: #7c3aed;
+    }
+    .content-form {
+      background: #0b1220;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .content-item {
+      background: #0b1220;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      position: relative;
+    }
+    .content-item h4 {
+      margin-top: 0;
+      color: #7c3aed;
+    }
+    .content-item .actions {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      display: flex;
+      gap: 10px;
+    }
+    .content-item .actions button {
+      padding: 5px 10px;
+      font-size: 12px;
+    }
+    .content-item .actions .edit-btn {
+      background: #06b6d4;
+    }
+    .content-item .actions .delete-btn {
+      background: #ff4757;
+    }
+    .content-item img {
+      max-width: 100%;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
@@ -122,6 +177,7 @@
     <div class="tabs">
       <div class="tab active" onclick="switchTab('send-email')">إرسال رسائل</div>
       <div class="tab" onclick="switchTab('messages')">الرسائل الواردة</div>
+      <div class="tab" onclick="switchTab('add-content')">إضافة محتوى</div>
     </div>
 
     <div id="send-email" class="tab-content active">
@@ -147,6 +203,50 @@
     <div id="messages" class="tab-content">
       <h2>الرسائل الواردة</h2>
       <div id="messages-list"></div>
+    </div>
+
+    <div id="add-content" class="tab-content">
+      <h2>إضافة محتوى</h2>
+      
+      <div class="content-type-selector">
+        <button onclick="showContentForm('text')" class="active-type">نص</button>
+        <button onclick="showContentForm('image')">صورة</button>
+      </div>
+      
+      <div id="text-form" class="content-form">
+        <form id="add-text-form">
+          <div class="form-group">
+            <label for="text-title">عنوان النص</label>
+            <input type="text" id="text-title" required>
+          </div>
+          <div class="form-group">
+            <label for="text-content">محتوى النص</label>
+            <textarea id="text-content" required></textarea>
+          </div>
+          <button type="submit">حفظ النص</button>
+        </form>
+      </div>
+      
+      <div id="image-form" class="content-form" style="display: none;">
+        <form id="add-image-form">
+          <div class="form-group">
+            <label for="image-title">عنوان الصورة</label>
+            <input type="text" id="image-title" required>
+          </div>
+          <div class="form-group">
+            <label for="image-url">رابط الصورة</label>
+            <input type="url" id="image-url" required>
+          </div>
+          <div class="form-group">
+            <label for="image-description">وصف الصورة</label>
+            <textarea id="image-description" required></textarea>
+          </div>
+          <button type="submit">حفظ الصورة</button>
+        </form>
+      </div>
+      
+      <h3 style="margin-top: 30px;">المحتوى المضاف</h3>
+      <div id="content-list"></div>
     </div>
   </div>
 
@@ -230,7 +330,144 @@
       });
     });
 
+    function showContentForm(type) {
+      document.querySelectorAll('.content-form').forEach(form => {
+        form.style.display = 'none';
+      });
+      document.querySelectorAll('.content-type-selector button').forEach(btn => {
+        btn.classList.remove('active-type');
+      });
+      
+      document.getElementById(`${type}-form`).style.display = 'block';
+      document.querySelector(`.content-type-selector button[onclick="showContentForm('${type}')"]`).classList.add('active-type');
+    }
+
+    function loadContent() {
+      fetch('/api/content')
+        .then(response => response.json())
+        .then(content => {
+          const contentList = document.getElementById('content-list');
+          contentList.innerHTML = '';
+          
+          if (content.length === 0) {
+            contentList.innerHTML = '<p>لا يوجد محتوى مضاف</p>';
+            return;
+          }
+          
+          content.forEach(item => {
+            const contentItem = document.createElement('div');
+            contentItem.className = 'content-item';
+            contentItem.dataset.id = item.id;
+            
+            let contentHtml = `
+              <div class="actions">
+                <button class="edit-btn" onclick="editContent('${item.id}')">تعديل</button>
+                <button class="delete-btn" onclick="deleteContent('${item.id}')">حذف</button>
+              </div>
+              <h4>${item.title}</h4>
+            `;
+            
+            if (item.type === 'text') {
+              contentHtml += `<p>${item.content}</p>`;
+            } else {
+              contentHtml += `
+                <p>${item.description}</p>
+                <img src="${item.url}" alt="${item.title}">
+              `;
+            }
+            
+            contentItem.innerHTML = contentHtml;
+            contentList.appendChild(contentItem);
+          });
+        });
+    }
+
+    function editContent(id) {
+      fetch(`/api/content/${id}`)
+        .then(response => response.json())
+        .then(item => {
+          if (item.type === 'text') {
+            showContentForm('text');
+            document.getElementById('text-title').value = item.title;
+            document.getElementById('text-content').value = item.content;
+            document.getElementById('add-text-form').dataset.id = id;
+          } else {
+            showContentForm('image');
+            document.getElementById('image-title').value = item.title;
+            document.getElementById('image-url').value = item.url;
+            document.getElementById('image-description').value = item.description;
+            document.getElementById('add-image-form').dataset.id = id;
+          }
+          
+          document.getElementById('add-content').scrollIntoView({ behavior: 'smooth' });
+        });
+    }
+
+    function deleteContent(id) {
+      if (confirm('هل أنت متأكد من حذف هذا المحتوى؟')) {
+        fetch(`/api/content/${id}`, { method: 'DELETE' })
+          .then(() => {
+            loadContent();
+          });
+      }
+    }
+
+    document.getElementById('add-text-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const id = this.dataset.id || null;
+      const title = document.getElementById('text-title').value;
+      const content = document.getElementById('text-content').value;
+      
+      fetch(id ? `/api/content/${id}` : '/api/content', {
+        method: id ? 'PUT' : 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ 
+          type: 'text',
+          title,
+          content
+        })
+      })
+      .then(response => response.json())
+      .then(() => {
+        this.reset();
+        delete this.dataset.id;
+        loadContent();
+      });
+    });
+
+    document.getElementById('add-image-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const id = this.dataset.id || null;
+      const title = document.getElementById('image-title').value;
+      const url = document.getElementById('image-url').value;
+      const description = document.getElementById('image-description').value;
+      
+      fetch(id ? `/api/content/${id}` : '/api/content', {
+        method: id ? 'PUT' : 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ 
+          type: 'image',
+          title,
+          url,
+          description
+        })
+      })
+      .then(response => response.json())
+      .then(() => {
+        this.reset();
+        delete this.dataset.id;
+        loadContent();
+      });
+    });
+
     document.querySelector('.tab[onclick="switchTab(\'messages\')"]').addEventListener('click', loadMessages);
+    document.querySelector('.tab[onclick="switchTab(\'add-content\')"]').addEventListener('click', loadContent);
 
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('success') === '1') {

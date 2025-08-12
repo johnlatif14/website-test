@@ -37,21 +37,11 @@
     h1 {
       color: #7c3aed;
     }
-    .success-message {
-      color: #2ecc71;
-      background: rgba(46, 204, 113, 0.1);
-      padding: 12px;
-      border-radius: 8px;
-      margin-bottom: 16px;
-      text-align: center;
-      display: none;
-    }
   </style>
 </head>
 <body>
   <h1>اتصل بنا</h1>
-  <div id="success-message" class="success-message">تم إرسال رسالتك بنجاح!</div>
-  <form id="contact-form" action="/submit-contact" method="POST">
+  <form action="/submit-contact" method="POST">
     <div>
       <label for="name">الاسم</label>
       <input type="text" id="name" name="name" required>
@@ -66,39 +56,5 @@
     </div>
     <button type="submit">إرسال</button>
   </form>
-
-  <script>
-    document.getElementById('contact-form').addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      const formData = new FormData(this);
-      
-      fetch('/submit-contact', {
-        method: 'POST',
-        body: formData
-      })
-      .then(response => {
-        if (response.ok) {
-          document.getElementById('success-message').style.display = 'block';
-          document.getElementById('contact-form').reset();
-          setTimeout(() => {
-            document.getElementById('success-message').style.display = 'none';
-          }, 5000);
-        }
-      })
-      .catch(error => {
-        console.error('Error:', error);
-      });
-    });
-
-    // Show success message if redirected with success parameter
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('success') === '1') {
-      document.getElementById('success-message').style.display = 'block';
-      setTimeout(() => {
-        document.getElementById('success-message').style.display = 'none';
-      }, 5000);
-    }
-  </script>
 </body>
 </html>
