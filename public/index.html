@@ -81,13 +81,13 @@
       <div class="brand">
         <div class="logo">Devolper</div>
         <div>
-          <div style="font-weight:700">شخص بسيط</div>
+          <div style="font-weight:700">شخص</div>
           <div style="font-size:13px;color:var(--muted)">مطور ويب — مصمم واجهات</div>
         </div>
       </div>
       <nav>
         <a href="#projects">المشاريع</a>
-        <a href="#about">عني</a>
+        <a href="about.html">عني</a>
         <a href="contact.html">تواصل</a>
       </nav>
     </header>
@@ -98,9 +98,6 @@
         <p>موقع شخصي لعرض مشاريعي بطريقة أنيقة — فيه 3D بسيط وأنيميشن.</p>
         <a class="btn" href="#projects">شاهد مشاريعي</a>
       </div>
-
-
-
     </section>
 
 <section id="projects">
@@ -143,8 +140,6 @@
   </div>
 </section>
 
-
-
 <section id="contact" style="margin-top:18px" data-aos="fade-up">
   <h3>تواصل</h3>
   <p style="color:var(--muted); margin-bottom:10px">
@@ -152,9 +147,8 @@
   </p>
 
   <div class="contact-links" style="display:flex;gap:12px;align-items:center">
-
-<!-- بدلاً من "يتم انشاء صفحة للتحدث خلال الموقع" -->
-<a href="contact.html" class="btn" style="margin-right: 12px;">للتواصل في الصفحة اضغط هنا</a>
+    <a href="contact.html" class="btn" style="margin-right: 12px;">للتواصل في الصفحة اضغط هنا</a>
+  </div>
   <style>
     .contact-links .social-link {
       display:inline-flex;
@@ -173,7 +167,6 @@
     }
   </style>
 </section>
-
 
     <footer>
       تم بناء هذا الموقع مع تأثيرات CSS وThree.js 
@@ -254,6 +247,28 @@
     /* Small helper: make project cards clickable for demo */
     document.querySelectorAll('.proj').forEach((p,i)=>{
       p.addEventListener('click', ()=>{alert('افتح صفحة المشروع أو أضف رابط هنا (Project '+(i+1)+')')});
+    });
+
+    // نضيف هذا المتغير في بداية السكربت
+    let lastAboutClick = 0;
+    
+    // نضيف هذا الحدث بعد تحميل الصفحة
+    document.addEventListener('DOMContentLoaded', function() {
+      const aboutLink = document.querySelector('nav a[href="#about"]');
+      
+      aboutLink.addEventListener('click', function(e) {
+        const now = Date.now();
+        
+        if (now - lastAboutClick < 3000) {
+          // إذا مر أقل من 3 ثواني منذ النقر الأخير
+          window.location.href = 'about.html';
+        } else {
+          // إذا كانت المرة الأولى أو مر أكثر من 3 ثواني
+          e.preventDefault();
+          alert('غير متاح الآن');
+          lastAboutClick = now;
+        }
+      });
     });
   </script>
 </body>
